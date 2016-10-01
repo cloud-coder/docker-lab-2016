@@ -6,7 +6,7 @@ There are three parts to this lab.
 ## Part 1
 Basic Docker and Creating a container with a web server
 
-Lab instructions: [lab-instructions.md](../part-1/lab-instructions.md)
+Lab instructions: [lab-instructions.md](part-1/lab-instructions.md)
 
 ## Part 2
 Docker compose and building multiple containers that work together
