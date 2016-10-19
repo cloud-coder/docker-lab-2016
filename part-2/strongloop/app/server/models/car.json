@@ -1,0 +1,26 @@
+{
+  "name": "Car",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "model": {
+      "type": "string"
+    },
+    "make": {
+      "type": "string"
+    },
+    "year": {
+      "type": "number"
+    },
+    "miles": {
+      "type": "number"
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {}
+}

@@ -1,0 +1,42 @@
+version: "2"
+
+services:
+
+  gateway:
+    build: ./gateway
+    ports:
+      - "8080:80"
+    networks:
+      - frontend
+
+  api:
+    build: ./strongloop
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+    networks:
+      - frontend
+      - backend
+    volumes:
+      - ${PWD}/strongloop/app:/home/strongloop/app
+    depends_on:
+      - "db"
+
+  db:
+    build: ./db
+    ports:
+      - "27017:27017"
+      - "28017:28017"
+    networks:
+      - backend
+    environment:
+      - MONGODB_USER=dba
+      - MONGODB_DATABASE=mycars
+      - MONGODB_PASS=dbpass
+
+networks:
+  frontend:
+    #driver: overlay
+  backend:
+    #driver: overlay

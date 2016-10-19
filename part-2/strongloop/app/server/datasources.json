@@ -1,0 +1,17 @@
+{
+  "memdb": {
+    "name": "memdb",
+    "localStorage": "",
+    "file": "memdb.json",
+    "connector": "memory"
+  },
+  "mongo": {
+    "name": "mongo",
+    "host": "db",
+    "port": 27017,
+    "database": "mycars",
+    "user": "dba",
+    "password": "dbpass",
+    "connector": "mongodb"
+  }
+}
