@@ -1,5 +1,5 @@
 #!/bin/bash
-#npm install
+npm install
 if [ "$NODE_ENV" = "production" ]
 then
   npm start
