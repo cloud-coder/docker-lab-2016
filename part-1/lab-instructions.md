@@ -5,25 +5,28 @@ used later as we build up our microservice solution in later labs. This lab will
   NGINX will be running in a Docker Container and you will access the server from your local machine.
 
 You will complete the following high level steps in this lab
-* Create an NGINX Docker container from an image on Docker Hub
-* Explore the container that was created
-* Create a Docker File to create a new customized NGINX Image
-* Create a container using new the image and Validate
-* Run the NGINX Container and Test from your Local Machine
+* Create a Docker container of a web server (NGINX) from an image on a public registry (e.g. Docker Hub)
+* Explore the NGINX container you created from the Docker Hub image
+* Create your own NGINX image using Dockerfile that allowed you to customize the base NGINX image with repeatable instructions
+* Create a container from the custom image you built using a Dockerfile
+* Access the running webserver in your container and see your customizations
+* Learn basic docker commands to list, and delete images and containers.
 
 ## Create a Docker container from Docker Hub
-The first part of this lab will be to create a Docker container that has NGINX within it. You could start with a base image 
-with just an operating system, and install the required software. However, there is a better way using a public registry of 
-images known as Docker Hub. We will search Docker Hub for a base image for NGINX (a web server/load balancer) and run a 
-container with this image.
+The first part of this lab will be to create a Docker container running NGINX within it. A container is a running instance of an image.
+You could start with a base image with just an operating system, and install the required software. However, there is a better way 
+using a public registry of images known as Docker Hub. We will search Docker Hub for a base image for NGINX 
+(a web server/load balancer) and run a container with this image.
 
 
-1. The first step is to find a suitable image. Do this by searching for the NGINX image on Docker Hub:
+1. Open a terminal window on your machine
+2. You want to find a suitable image. Do this by searching for the NGINX image on Docker Hub:
 
     ```bash
     docker search nginx
     ```
     
+    You should get back a list of results similar to the image below:
     ![alt](../images/picture1.png "docker search results")
 
 2. Find the image you want to use, in our case the official build, and run the image in a container:
@@ -33,19 +36,19 @@ container with this image.
     ```
 
     In the above command:
-    * *docker run* – runs a container
+    * *docker run* – creates and runs a container
     * *nginx* – is the image you want to run
     * *-t* – flag to assign a terminal inside the newly created container
     * *-i* – flag that allows you to make an interactive connection by getting the standard in of the container
     * */bin/bash* – launches a Bash shell inside the container
 
     Your terminal window is now running a bash shell inside the NGINX container you created. 
-    You will see that your shell prompt has changed from your local machine to the container and 
+    You will see that your shell prompt has changed from your local machine to the container, and 
     logged in as root. In the example below you are now logged in as root on the host *38844fe39f62*
 
     ![alt](../images/picture2.png "shell prompt in the container")
 
-3. The first thing we will want to do is examine the file system of the container. 
+3. The first thing we will want to do is examine the file system of the container you have shelled into. 
 Change to the nginx html directory and have a look at the files that are there. 
 We will be adding a new file here later so it is good to see what is there right now.
 
@@ -59,9 +62,11 @@ We will be adding a new file here later so it is good to see what is there right
 
 > **What does the Docker run command do?**
 >
+> It is helpful to understand what the docker run command is actually doing.
+>
 > Reference: [https://docs.docker.com/engine/understanding-docker/](https://docs.docker.com/engine/understanding-docker/)
 >
-> *In order, Docker Engine does the following:*
+> *In order, Docker Engine does the following when you execute docker run:*
 > * **Pulls the nginx image:** Docker Engine checks for the presence of the nginx image. If the image already 
 exists, then Docker Engine uses it for the new container. If it doesn’t exist locally on the host, 
 then Docker Engine pulls it from [Docker Hub](https://hub.docker.com).
@@ -81,7 +86,7 @@ script to be run), and;
 In this section we will keep our container running and run some basic CLI commands to explore what has 
 just been done in the previous section.
 
-1. Open a new terminal window
+1. Open a new terminal window and leave the first terminal window running
 2. Run the CLI command to see a list of images you have on your machine.  You will see that your 
 local machine has the nginx Docker image that was pulled from Docker Hub via the run command above
  and cached on your local machine:
@@ -101,7 +106,7 @@ local machine has the nginx Docker image that was pulled from Docker Hub via the
 
     ![alt](../images/picture5.png "docker images")
 
-4. Return to the terminal window where you have shelled into the container. You can now stop the container
+4. Return to the first terminal window where you have shelled into the container. You can now stop the container
  by typing exit. Verify the container is stopped by running *docker ps*
 
 > **Why do Containers have funny names?**
@@ -115,15 +120,16 @@ So far, we have taken an image (NGINX) from Docker Hub, pulled it onto our machi
 
 Now, we will take this a step further and customize the image in a repeatable manner by building an image
  using instructions from a Dockerfile.  "A Dockerfile is a text document that contains all the commands a user 
- could call on the command line to assemble an image."
+ could call on the command line to assemble an image."[ref 1](https://docs.docker.com/engine/reference/builder/)
 
 "The Docker daemon runs the instructions in the Dockerfile one-by-one, committing the result of each 
 instruction to a new image if necessary, before finally outputting the ID of your new image. The Docker daemon
  will automatically clean up the context you sent.  Whenever possible, Docker will re-use the intermediate 
- images(cache), to accelerate the Docker build process significantly."
+ images(cache), to accelerate the Docker build process significantly." [ref 2](https://docs.docker.com/engine/reference/builder/)
 
-1. Open a terminal window and create a directory on your local machine
-2. In the directory create an HTML file called newIndex.html, with the following content:
+1. Open a terminal window and create a directory on your local machine (e.g. mycontainer)
+2. Change to the directory you created  ```bash cd mycontainer```
+2. In the directory create an HTML file called ```newIndex.html```, with the following content:
     ```html
     <!DOCTYPE html>
     <html>
@@ -136,25 +142,25 @@ instruction to a new image if necessary, before finally outputting the ID of you
     </html>
     ```
 
-3. In the same directory create a file called "Dockerfile", open the file in an editor, and paste in the 
-content below.  This Dockerfile contains instructions build an image from the nginx image on DockerHub, 
+3. In the same directory create a file called ```Dockerfile```, open the file in an editor, and paste in the 
+content below.  This Dockerfile contains instructions to build an image from the nginx image on DockerHub, 
 copy your HTML file to the image, expose port 80 and then start NGINX.
 
     ```dockerfile
     # identify the image from which we want to create our new image
     FROM nginx
 
-    # copy a new HTML file from your local machine to the container
+    # copy a new HTML file from your local machine to the container under /usr/share/nginx
     COPY newIndex.html /usr/share/nginx/html 
 
-    #Expose port 80 
+    #Expose port 80 of the container
     EXPOSE 80
 
-    # start nginx
+    # start nginx server
     RUN /bin/bash -c 'service nginx start'
     ```
 
-4. Run the Docker build command to build an image from the Dockerfile you specified and tag the image mynginx.
+4. Next, run the Docker build command to build an image from the Dockerfile you specified and tag the image mynginx.
 
     ```bash
     docker build . –t mynginx
@@ -163,7 +169,7 @@ copy your HTML file to the image, expose port 80 and then start NGINX.
     This command tells docker to build from the current directory and tagging the image as mynginx
 
 5. Verify that your image was created successfully by examining the logs that appear.  You 
-can see each step of the Dockerfile being executed.  The log should look like the following:
+can see each step of the Dockerfile being executed.  The log should look similar to the following:
 
     ![alt](../images/picture6.png "docker images")
 
@@ -176,8 +182,10 @@ instructions:
     ```
     ![alt](../images/picture7.png "docker images")
 
+    NOTE: Your local lab machine may have more images, verify that mynginx and nginx are there.
+
 What you have now is a Docker image on your local machine that has the nginx image from Docker Hub, 
-along with a new file added to the html directory, and the commend to start up NGINX.
+along with a new file added to the html directory, and the command to start the server.
 
 ## Create a Container using the New Image and Validate
 
@@ -202,11 +210,11 @@ Now that you have built an image using the Dockerfile you can create a container
     ```
 
 4. You should see your __*newIndex.html*__, along with the default files that nginx already had.
-Exit from the container
+5. Exit from the container
 
 ## Run the NGINX Container and Test from your Local Machine
 
-Now that you have created an image using your Dockerfile, you can go ahead and create a container from the image
+Now that you have created an image using your Dockerfile, you can go ahead and create a running container from the image
 
 1. Run Docker command to create container and map your ports:
 
@@ -214,7 +222,9 @@ Now that you have created an image using your Dockerfile, you can go ahead and c
     docker run –d –p 8080:80 mynginx
     ```
 
-**TODO: explain the command here**
+> * The docker run command is taking the mynginx image and creating a container.  
+> * The -d flag tells the run command to run this in a detached mode.  This means when the containers exit when the root process used to run the container exits
+> * -p 8080:80 maps port 8080 on your local machine to port 80 in the container
 
 2. You will see a string of characters return, this is your container Id.  Run the Docker ps command to 
 see that your container started successfully
@@ -235,11 +245,71 @@ HTML page that you created.
 
 ## Remove images and containers
 
-**TODO: add instructions here***
+Now that we have validated the container we can run some common commands to remove containers and images.
+
+### Stop  running container
+
+1.  Get your contianer's ID by listing running containers
+    ```bash 
+    docker ps
+    ```
+2.  Use the first four characters of your CONTAINER ID to stop the container
+    ```bash 
+    docker stop <first four characters of your container ID>
+    ```
+3.  Run docker ps again and you should no longer see the container running
+
+### Delete container
+
+Once a container is stopped it will still exist on your system and can be restarted at a later time.  Let's go ahead
+and delete this container since we are done with it.
+
+1.  Find all containers on your system.  The  ```-a``` flag will show all containers, not just running containers.  
+You will get a list of containers listed out similar to the screenshot below.
+    ```bash
+    docker ps -a
+    ```
+    ![alt](../images/picture9.png "docker images")
+
+2.  Find the container you want to delete and make note of the first 4 characters of its CONTAINER ID.  You can now 
+delete the container with the following command.
+
+    ```bash
+    docker rm <first 4 characters of CONTAINER ID>
+    ```    
+
+3. Run the ```docker ps -a``` command again and confirm the container is now deleted.
+
+### Delete images
+
+1.  Get a list of images on your machine
+
+    ```bash 
+    docker images
+    ```
+
+    ![alt](../images/picture7.png 'docker images listing')
+
+2.  Find the image you want to delete, make note of the IMAGE ID, and run the docker command to delete images:
+
+    ```bash
+    docker rmi <IMAGE ID>
+    ```
+    > NOTE: You may get an error deleting the image if there are any containers remaining that reference the image.  You will see 
+    > an error similar to the one below.  If you encounter that error you will need to go back an delete any containers that reference
+    > this image.
+    >
+    > _"Error response from daemon: conflict: unable to remove repository reference "mynginx" (must 
+    > force) - container 73b0daae548f is using its referenced image 62978e41d990"_
+
 
 ## Summary
 
-What you have done in this lab is to create a container from an image on Docker Hub and access the running 
-container.  Next, you created your own custom image using a Dockerfile and leveraging the base image we 
-found on DockerHub.  We then created a container from the new image and were able to see how we can 
-consistently, and quickly create images and containers to suit our needs.
+You have now completed the basic Docker lab.  Let's recap what you learned in this lab exercise:
+
+* You created a Docker container of a web server (NGINX) from an image on a public registry (e.g. Docker Hub)
+* You explored the NGINX container you created from the Docker Hub image
+* You created your own NGINX image using Dockerfile that allowed you to customize the base NGINX image with repeatable instructions
+* You created a container from the custom image you built using a Dockerfile
+* You accessed the running webserver in your container and see your customizations 
+* You learned basic docker commands to list, and delete images and containers.
