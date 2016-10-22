@@ -11,7 +11,7 @@ There are three parts to this lab.
 [Lab 1](part-1/lab-instructions.md) - Basic Docker lab, and creating a container with a web server 
 
 ## Part 2
-[Lab2](part-2/) - Docker compose and building multiple containers that work together
+[Lab2](part-2/lab-instructions.md) - Docker compose and building multiple containers that work together
 
 ## Part 3
 Docker swarm for clustering.  Turn a group of containers into a single virtual docker engine
