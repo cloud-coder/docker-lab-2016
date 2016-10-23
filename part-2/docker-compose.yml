@@ -34,6 +34,7 @@ services:
       - MONGODB_USER=dba
       - MONGODB_DATABASE=mycars
       - MONGODB_PASS=dbpass
+      - JOURNALING=no
 
 networks:
   frontend:
