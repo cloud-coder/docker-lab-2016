@@ -235,5 +235,5 @@ Now you have to scale app services with traditional means.  You get less utiliza
 ![Traditional stack](./img/traditional-stack.png)
 
 ## Swarm Stack
-Swarm scales your services as containers on any node.  You get better utilization of VMs.  You also get to take advantage of overlay networking to segregate containers.
+Swarm scales your services as containers on any node.  You get better utilization of VMs.  You also get to take advantage of overlay networking to segregate containers. NOTE: The layout of containers below is just an example.  The swarm decides where to best place containers.  
 ![Traditional stack](./img/swarm-stack.png)
