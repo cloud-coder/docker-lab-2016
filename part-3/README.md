@@ -4,6 +4,7 @@ In order to scale your application workloads for production needs, you need to s
 
 # Prerequisites
 1. Install [Docker Toolbox](https://www.docker.com/products/docker-toolbox).  We leverage Docker Machine in the scripts to provision Docker 1.12+ on Virtual Box Linux VMs.  You could just install Docker Engine directly if you are on [Linux](https://docs.docker.com/engine/installation/).
+1. Have a [Docker Hub](https://hub.docker.com/) account
 
 # Step 1 - Setup Docker Swarm
 1. Use docker-machine to provision Docker engine on three nodes (i.e. vms).
@@ -195,6 +196,36 @@ Now test that shared storage works by creating a volume on worker-1 and validati
     docker volume rm hellopersistence
     ```
 
-# Step 3 - Build Your App Images
-We will build and push images to Docker Hub.  Don't forget to log into Docker Hub, and also to change the image names.  That is, you will not have permission to push images to 
+# Step 3 - Build Docker Images
+We will build and push images to Docker Hub.  Don't forget to log into Docker Hub, and also to change the image names.  That is, you will not have permission to push images to `cascon/*` organization.
+
+1. Log into Docker Hub
+
+    ```
+    eval $(docker-machine env manager-1)
+    docker login
+    ```
+1. Build and push the database (mongodb), static web server (nginx) and REST backend (strongloop) from part 2.
+
+    ```
+    docker build --rm -t cascon/db ../part-2/db
+    docker push cascon/db
+    docker build --rm -t cascon/gateway ../part-2/gateway
+    docker push cascon/gateway
+    docker build --rm -t cascon/strongloop ../part-2/strongloop
+    docker push cascon/strongloop
+    ```
+    
+1. Later in the turorial we will deploy centralized logging using the [ELK stack](https://www.elastic.co/videos/introduction-to-the-elk-stack).  Let's build and push those images as well.
+
+    ```
+    docker build --rm -t cascon/elk-elasticsearch ./elk/elasticsearch
+    docker push cascon/elk-elasticsearch
+    docker build --rm -t cascon/elk-logstash ./elk/logstash
+    docker push cascon/elk-logstash
+    docker build --rm -t cascon/elk-kibana ./elk/kibana
+    docker push cascon/elk-kibana
+    ```
+
+
 
