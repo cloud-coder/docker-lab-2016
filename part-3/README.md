@@ -58,7 +58,7 @@ In order to scale your application workloads for production needs, you need to s
     docker info
     ```
     
-# (Optional) Step 2 - Setup shared storage between VMs
+# Step 2 - Setup shared storage between VMs
 The Swarm will distrubute containers amongst VMs wherever there are resources available.  You can constrain where certain containers are run, but to have a truly scalable system, you should try to avoid that.  This means that containers that save state, need to mount volumes from a shared storage.  You could use NFS or some other block storage for this.  Docker provides a `volume driver` plugin framework.  Many third party storage providers are creating drivers.  In this tutorial, we will use EMC's [REX-Ray](http://rexray.readthedocs.io/en/stable/), since it works well with virtualbox.
 
 1. Make sure that Virtualbox authentication is disabled to make the demo easier to complet and start the HTTP SOAP API.
@@ -237,3 +237,76 @@ Now you have to scale app services with traditional means.  You get less utiliza
 ## Swarm Stack
 Swarm scales your services as containers on any node.  You get better utilization of VMs.  You also get to take advantage of overlay networking to segregate containers. NOTE: The layout of containers below is just an example.  The swarm decides where to best place containers.  
 ![Traditional stack](./img/swarm-stack.png)
+
+1. Create overlay networks for frontend and backend services.
+
+    ```
+    docker network create \
+    --driver overlay \
+    frontend
+
+    docker network create \
+    --driver overlay \
+    backend
+
+    docker network create \
+    --driver overlay \
+    logging
+    docker network ls
+    ```
+    
+1. Create named Docker volumes by taking advantage of the libStorage driver that REX-ray provides (see step 2 above)
+
+    ```
+    docker volume create --driver rexray --opt size=7 --name dbdata
+    docker volume create --driver rexray --opt size=7 --name esdata
+    docker volume ls
+    ```
+
+1. Create db service and connect it to the backend overlay network.  Note the `--mount type=volume,source=dbdata,target=/data/db,volume-driver=rexray` that mounts the named docker volume we created above.  This makes sure that if the db container dies, or needs to be created on another node, that its data is not lost.
+
+    ```
+    docker service create \
+     --name db \
+     --network backend \
+     --network logging \
+     --replicas 1 \
+     -e MONGODB_USER=dba \
+     -e MONGODB_DATABASE=mycars \
+     -e MONGODB_PASS=dbpass \
+     --mount type=volume,source=dbdata,target=/data/db,volume-driver=rexray \
+     cascon/db:latest
+    ```
+    
+1. Create the api service, and connect it to the backend and frontend overlay networks.  Note the `--log-driver=gelf --log-opt gelf-address=udp://$(docker-machine ip manager-1):12201`.  This tells the container to use Docker's built in log driver for gelf.  The gelf format of log messages is one that logstash understands, and can be consumed by the ELK stack as such.
+
+    ```
+    docker service create \
+    --name api \
+    --network backend \
+    --network frontend \
+    --network logging \
+    --replicas 1 \
+    -e NODE_ENV=production \
+    --log-driver=gelf --log-opt gelf-address=udp://$(docker-machine ip manager-1):12201 \
+    cascon/strongloop:latest
+    ```
+    
+1. Create the nginx gateway to strongloop and expose ingress 8080.  8080 will be ingress on every node in the swarm.  This allows an external load balancer to spray traffic to any node in the swarm, and still reach nginx.
+
+    ```
+    docker service create \
+    --name gateway \
+    --network frontend \
+    --network logging \
+    --replicas 1 \
+    --log-driver=gelf --log-opt gelf-address=udp://$(docker-machine ip manager-1):12201 \
+    -p 8080:80 \
+    cascon/gateway:latest
+
+    ```
+
+
+
+
+
