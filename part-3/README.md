@@ -226,7 +226,40 @@ We will build and push images to Docker Hub.  Don't forget to log into Docker Hu
     docker build --rm -t cascon/elk-kibana ./elk/kibana
     docker push cascon/elk-kibana
     ```
-# Step 4 - Run the app
+ 
+# Step 4 - Run the ELK stack
+The ELK stack will be used to provide centralized log collection for our containers.
+
+1. Target the swarm manager to deploy the ELK stack (Elasticsearch, logstash and Kibana).
+
+    ```
+    eval $(docker-machine env manager-1)
+    docker service create \
+    --name elasticsearch \
+    --replicas 1 \
+    --network logging \
+    -e LOGSPOUT=ignore \
+    --mount type=volume,source=esdata,target=/usr/share/elasticsearch/data,volume-driver=rexray \
+    cascon/elk-elasticsearch:latest
+    
+    docker service create \
+    --name logstash \
+    --replicas 1 \
+    --network logging \
+    -e LOGSPOUT=ignore \
+    -p 12201:12201/udp \
+    cascon/elk-logstash:latest logstash -f /opt/logstash/conf.d/logstash.conf
+    
+    docker service create \
+    --name kibana \
+    --replicas 1 \
+    --network logging \
+    -e LOGSPOUT=ignore \
+    -p 5601:5601 \
+    cascon/elk-kibana:latest
+    ```
+
+# Step 5 - Run the app
 In this step, we will run the application you build in part 2.  This time though, we will run each container we defined in the Docker compose file, as a Docker 1.12+ service.  Services in Docker allow us to easily define scalable micro services that are highly available.  To learn more, I would recommend this [tutorial](https://docs.docker.com/engine/swarm/swarm-tutorial/) and this [video](https://www.youtube.com/watch?v=KC4Ad1DS8xU&). 
 
 
@@ -241,6 +274,7 @@ Swarm scales your services as containers on any node.  You get better utilizatio
 1. Create overlay networks for frontend and backend services.
 
     ```
+    eval $(docker-machine env manager-1)
     docker network create \
     --driver overlay \
     frontend
