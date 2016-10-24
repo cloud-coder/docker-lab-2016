@@ -231,7 +231,9 @@ In this step, we will run the application you build in part 2.  This time though
 
 
 ## Traditional Stack
-Now you have to scale this with traditional means.  You get less utilization of VMs.
+Now you have to scale app services with traditional means.  You get less utilization of VMs.
 ![Traditional stack](./img/traditional-stack.png)
 
-
+## Swarm Stack
+Swarm scales your services as containers on any node.  You get better utilization of VMs.  You also get to take advantage of overlay networking to segregate containers.
+![Traditional stack](./img/swarm-stack.png)
