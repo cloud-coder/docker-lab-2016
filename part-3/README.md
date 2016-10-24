@@ -7,17 +7,17 @@ In order to scale your application workloads for production needs, you need to s
 
 # Step 1 - Setup Docker Swarm
 1. Use docker-machine to provision Docker engine on three nodes (i.e. vms).
-```
-docker-machine create -d virtualbox manager-1
-docker-machine create -d virtualbox worker-1
-docker-machine create -d virtualbox worker-2
-```
-
+    ```
+    docker-machine create -d virtualbox manager-1
+    docker-machine create -d virtualbox worker-1
+    docker-machine create -d virtualbox worker-2
+    ```
 1. Now take a look at the list of machines that are catalogued
-```
-docker-machine ls --filter=driver=virtualbox
-```
+    ```
+    docker-machine ls --filter=driver=virtualbox
+    ```
 1. (Optional) Target the manager node, and start a simple [swarm visualizer](https://github.com/ManoMarks/docker-swarm-visualizer).
+
 ```
 eval $(docker-machine env manager-1)
 docker run -d -p 5000:5000 --name=swarm-viz \
@@ -27,7 +27,6 @@ docker run -d -p 5000:5000 --name=swarm-viz \
  -v /var/run/docker.sock:/var/run/docker.sock \
  manomarks/visualizer
 ```
-
 1. Target the manager node, and make it the swarm master. Take note of command to join nodes to the swarm.  You will use this in the next step.
 ```
 eval $(docker-machine env manager-1)
