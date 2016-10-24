@@ -148,3 +148,50 @@ The Swarm will distrubute containers amongst VMs wherever there are resources av
     docker-machine ssh worker-2 "sudo rexray service start"
     docker-machine ssh worker-2 "docker volume ls"
     ```
+
+## Step. 2.1 - Test the volume setup
+Now test that shared storage works by creating a volume on worker-1 and validating that it is visible on worker-2.
+
+1. Create a sample volume called `hellopersistence` and run a simple `busybox` container mounting that volume. Let's do this first with a standalone container.
+
+    ```
+    eval $(docker-machine env worker-1)
+    docker volume rm hellopersistence
+    docker volume create --driver rexray --opt size=1 --name hellopersistence
+    docker run -tid --volume-driver=rexray -v hellopersistence:/mystore --name temp01 busybox
+    docker exec temp01 touch /mystore/myfile
+    ```
+
+1. You should see myfile listed in the container volume.  Then we can remove the container (the volume will persist).
+
+    ```
+    docker exec temp01 ls /mystore
+    docker rm -f temp01
+    ```
+    
+1. Now target worker-2, and startup a new container there.  We mount the same named volume into the new container, and you should see the same `myfile` listed.
+
+    ```
+    docker run -tid --volume-driver=rexray -v hellopersistence:/mystore --name temp01 busybox
+    docker exec temp01 ls /mystore
+    docker rm -f temp01
+    ```
+    
+1.  Now we will test with a Docker 1.12+ service, instead of a standalone container.  Remember to target a manager node when deploying services.
+
+    ```
+    eval $(docker-machine env manager-1)
+    docker service create --replicas 1 --name nginx -p 8080:80 --mount \      type=volume,source=hellopersistence,target=/usr/share/nginx/html,volume-driver=rexray \
+    nginx
+    docker service ls
+    docker service inspect --pretty nginx
+    docker service ps nginx
+    docker service rm nginx
+    ```
+    
+1. Finally remove the volume
+
+    ```
+    docker volume rm hellopersistence
+    ```
+
