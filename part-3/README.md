@@ -68,7 +68,7 @@ The Swarm will distrubute containers amongst VMs wherever there are resources av
     export HOST_VOLUME_PATH=${PWD}/volumes
     ```
     
-1. Install the REX-ray driver master on `manager-1`.  The versions are VERY IMPORTANT.  Unfortunately the project is still not 1.0 release, so the metedata format of the config file changes a lot amongst releases.
+1. Install the REX-ray server on `manager-1`.  The versions are VERY IMPORTANT.  Unfortunately the project is still not 1.0 release, so the metadata format of the config file changes a lot amongst releases.
 
     ```
     docker-machine ssh manager-1 "curl -sSL https://dl.bintray.com/emccode/rexray/install | sh -s -- stable 0.5.1"
@@ -101,4 +101,50 @@ The Swarm will distrubute containers amongst VMs wherever there are resources av
     docker-machine ssh manager-1 "docker volume ls"
     ```
     
+1. Install the REX-ray client on worker-1
 
+    ```
+    docker-machine ssh worker-1 \
+    "curl -sSL https://dl.bintray.com/emccode/rexray/install | sh -s -- stable 0.5.1"
+    docker-machine ssh worker-1 \
+    "wget http://tinycorelinux.net/6.x/x86_64/tcz/udev-extra.tcz \
+    && tce-load -i udev-extra.tcz && sudo udevadm trigger"
+    docker-machine ssh worker-1 "sudo rexray service stop"
+    docker-machine ssh worker-1 "sudo rm /etc/rexray/config.yml"
+    
+    docker-machine ssh worker-1 \
+    "sudo tee -a /etc/rexray/config.yml << EOF
+    rexray:
+      logLevel: warn
+    libstorage:
+      host:    tcp://${REXRAY_SERVER}:7979
+      service: virtualbox
+    "
+    
+    docker-machine ssh worker-1 "sudo rexray service start"
+    docker-machine ssh worker-1 "docker volume ls"
+    ```
+    
+1. Install the REX-ray client on worker-2
+
+    ```
+    docker-machine ssh worker-2 \
+    "curl -sSL https://dl.bintray.com/emccode/rexray/install | sh -s -- stable 0.5.1"
+    docker-machine ssh worker-2 \
+    "wget http://tinycorelinux.net/6.x/x86_64/tcz/udev-extra.tcz \
+    && tce-load -i udev-extra.tcz && sudo udevadm trigger"
+    docker-machine ssh worker-2 "sudo rexray service stop"
+    docker-machine ssh worker-2 "sudo rm /etc/rexray/config.yml"
+    
+    docker-machine ssh worker-2 \
+    "sudo tee -a /etc/rexray/config.yml << EOF
+    rexray:
+      logLevel: warn
+    libstorage:
+      host:    tcp://${REXRAY_SERVER}:7979
+      service: virtualbox
+    "
+    
+    docker-machine ssh worker-2 "sudo rexray service start"
+    docker-machine ssh worker-2 "docker volume ls"
+    ```
