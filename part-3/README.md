@@ -19,7 +19,7 @@ In order to scale your application workloads for production needs, you need to s
     ```
     docker-machine ls --filter=driver=virtualbox
     ```
-1. (Optional) Target the manager node, and start a simple [swarm visualizer](https://github.com/ManoMarks/docker-swarm-visualizer).
+1. (Optional) Target the manager node, and start a simple [swarm visualizer](https://github.com/ManoMarks/docker-swarm-visualizer).  And then go to `http://$(docker-machine ip manager-1):5000` to see the visualizer.
 
     ```
     eval $(docker-machine env manager-1)
@@ -258,6 +258,12 @@ The ELK stack will be used to provide centralized log collection for our contain
     -p 5601:5601 \
     cascon/elk-kibana:latest
     ```
+    
+1. Test That Kibana is running by going to port 5601 on any swarm node.
+
+    ```
+    open $(docker-machine ip manager-1):5601
+    ```
 
 # Step 5 - Run the app
 In this step, we will run the application you build in part 2.  This time though, we will run each container we defined in the Docker compose file, as a Docker 1.12+ service.  Services in Docker allow us to easily define scalable micro services that are highly available.  To learn more, I would recommend this [tutorial](https://docs.docker.com/engine/swarm/swarm-tutorial/) and this [video](https://www.youtube.com/watch?v=KC4Ad1DS8xU&). 
@@ -337,10 +343,37 @@ Swarm scales your services as containers on any node.  You get better utilizatio
     --log-driver=gelf --log-opt gelf-address=udp://$(docker-machine ip manager-1):12201 \
     -p 8080:80 \
     cascon/gateway:latest
+    ```
+    
+1. You can now go to any node on port 8080 to view the explorer API.  
 
     ```
+    open http://$(docker-machine ip worker-1):8080/explorer
+    ```
+    
+1. Make some REST POST calls to update data in the database. Make note of the updates, as you will validate that they are still there in the next step.
+    
+# Step 6 - Demo Ops
+1. Scale the nginx and strongloop to take on more load.
 
+    ```
+    docker service scale gateway=3
+    docker service scale api=3
+    ```
+    
+1. Drain the node that has the db.  This will force the db to be scheduled on another active node.
 
+    ```
+    docker node update --availability drain <node>
+    ```
+
+1. After the node is drained, we should see that the api may need a reboot (i.e. cached connection).  Since there is no docker service restart yet.  Here is a hack to force a restart.
+
+    ```
+    docker service update --env-add UPDATE=1 api
+    ```
+
+1. Now validate that the database data is still there from step 5.  Again go to http://$(docker-machine ip worker-1):8080/explorer`
 
 
 
