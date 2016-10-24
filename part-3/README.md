@@ -231,6 +231,7 @@ In this step, we will run the application you build in part 2.  This time though
 
 
 ## Traditional Stack
+Now you have to scale this with traditional means.  You get less utilization of VMs.
 ![Traditional stack](./img/traditional-stack.png)
 
 
