@@ -56,3 +56,49 @@ In order to scale your application workloads for production needs, you need to s
     eval $(docker-machine env manager-1)
     docker info
     ```
+    
+# (Optional) Step 2 - Setup shared storage between VMs
+The Swarm will distrubute containers amongst VMs wherever there are resources available.  You can constrain where certain containers are run, but to have a truly scalable system, you should try to avoid that.  This means that containers that save state, need to mount volumes from a shared storage.  You could use NFS or some other block storage for this.  Docker provides a `volume driver` plugin framework.  Many third party storage providers are creating drivers.  In this tutorial, we will use EMC's [REX-Ray](http://rexray.readthedocs.io/en/stable/), since it works well with virtualbox.
+
+1. Make sure that Virtualbox authentication is disabled to make the demo easier to complet and start the HTTP SOAP API.
+
+    ```
+    VBoxManage setproperty websrvauthlibrary null && vboxwebsrv --background
+    export REXRAY_SERVER=$(docker-machine ip manager-1)
+    export HOST_VOLUME_PATH=${PWD}/volumes
+    ```
+    
+1. Install the REX-ray driver master on `manager-1`.  The versions are VERY IMPORTANT.  Unfortunately the project is still not 1.0 release, so the metedata format of the config file changes a lot amongst releases.
+
+    ```
+    docker-machine ssh manager-1 "curl -sSL https://dl.bintray.com/emccode/rexray/install | sh -s -- stable 0.5.1"
+    docker-machine ssh manager-1 \
+    "wget http://tinycorelinux.net/6.x/x86_64/tcz/udev-extra.tcz \
+    && tce-load -i udev-extra.tcz && sudo udevadm trigger"
+    docker-machine ssh manager-1 "sudo rexray service stop"
+    docker-machine ssh manager-1 "sudo rm /etc/rexray/config.yml"
+    
+    docker-machine ssh manager-1 \
+    "sudo tee -a /etc/rexray/config.yml << EOF
+    rexray:
+      logLevel: warn
+    libstorage:
+      host:     tcp://${REXRAY_SERVER}:7979
+      embedded: true
+      service:  virtualbox
+      server:
+        endpoints:
+          public:
+            address: tcp://${REXRAY_SERVER}:7979
+        services:
+          virtualbox:
+            driver: virtualbox
+    virtualbox:
+      volumePath: ${HOST_VOLUME_PATH}
+    "
+    
+    docker-machine ssh manager-1 "sudo rexray service start"
+    docker-machine ssh manager-1 "docker volume ls"
+    ```
+    
+
