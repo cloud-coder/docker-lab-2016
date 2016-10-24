@@ -230,6 +230,7 @@ We will build and push images to Docker Hub.  Don't forget to log into Docker Hu
 In this step, we will run the application you build in part 2.  This time though, we will run each container we defined in the Docker compose file, as a Docker 1.12+ service.  Services in Docker allow us to easily define scalable micro services that are highly available.  To learn more, I would recommend this [tutorial](https://docs.docker.com/engine/swarm/swarm-tutorial/) and this [video](https://www.youtube.com/watch?v=KC4Ad1DS8xU&). 
 
 
-
+## Traditional Stack
+![Traditional stack](./img/traditional-stack.png)
 
 
