@@ -195,3 +195,6 @@ Now test that shared storage works by creating a volume on worker-1 and validati
     docker volume rm hellopersistence
     ```
 
+# Step 3 - Build Your App Images
+We will build and push images to Docker Hub.  Don't forget to log into Docker Hub, and also to change the image names.  That is, you will not have permission to push images to 
+
