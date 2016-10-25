@@ -203,7 +203,7 @@ Now test that shared storage works by creating a volume on worker-1 and validati
     ```
 
 # Step 3 - Build Docker Images
-We will build and push images to Docker Hub.  Don't forget to log into Docker Hub, and also to change the image names.  That is, you will not have permission to push images to `cascon/*` organization.
+We will build and push images to Docker Hub.  Don't forget to log into Docker Hub, and also to change the image names.  That is, you will not have permission to push images to `cascon/*` organization. NOTE: Make sure you are in the `part-3` directory before running the commands below.
 
 1. Log into Docker Hub
 
