@@ -314,7 +314,7 @@ Swarm scales your services as containers on any node.  You get better utilizatio
     docker volume ls
     ```
 
-1. Create the db service, and connect it to the `backend` overlay network.  Note the `--mount type=volume,source=dbdata,target=/data/db,volume-driver=rexray` that mounts the named docker volume we created above.  This makes sure that if the db container dies, or needs to be created on another node, that its data is not lost.  Wait for the db to start up before running the next step (i.e. starting the api).
+1. Create the db service, and connect it to the `backend` overlay network.  Note the `--mount type=volume,source=dbdata,target=/data/db,volume-driver=rexray` that mounts the named docker volume we created above.  This makes sure that if the db container dies, or needs to be created on another node, that its data is not lost.  Wait for the db to start up before running the next step (i.e. starting the api). 
 
     ```
     docker service create \
@@ -329,6 +329,15 @@ Swarm scales your services as containers on any node.  You get better utilizatio
      --mount type=volume,source=dbdata,target=/data/db,volume-driver=rexray \
      cascon/db:latest
     ```
+    
+1. (Optional) If you had a previous volume mounted to the container, you may get an `old lock file` error.  You can try and fix this by issuing the following commands in the running container.
+
+
+    ```
+    sudo -u mongodb mongod --repair --dbpath /data/db
+    sudo service mongod start
+    ```
+    
 1. Now that the db has started up, you can go back to Kibana to create an index.  Select the timestamp field as `@timestamp` and click the `create` button.  Now click the `Discover` tab at the top left of the UI.  You should see logs from mongodb!
 
 1. Create the api service, and connect it to the backend and frontend overlay networks.  Note the `--log-driver=gelf --log-opt gelf-address=udp://$(docker-machine ip manager-1):12201`.  This tells the container to use Docker's built in log driver for gelf.  The gelf format of log messages is one that logstash understands, and can be consumed by the ELK stack as such.
