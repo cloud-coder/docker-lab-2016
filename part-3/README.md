@@ -396,7 +396,7 @@ Swarm scales your services as containers on any node.  You get better utilizatio
 
 1. Now validate that the data is still there from step 5.  Again go to `http://$(docker-machine ip worker-1):8080/explorer`
 
-1. Let's stop nginx and make sure we have exactly one instance on every node in the cluster withthe `global` mode option.
+1. Let's stop nginx and make sure we have exactly one instance on every node in the cluster with the `global` mode option.
 
     ```
     docker service rm gateway
