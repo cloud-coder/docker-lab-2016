@@ -236,6 +236,16 @@ We will build and push images to Docker Hub.  Don't forget to log into Docker Hu
 # Step 4 - Run the ELK stack
 The ELK stack will be used to provide centralized log collection for our containers.
 
+1. First create the docker volumes and networks for the ELK stack
+
+    ```
+    docker network create \
+    --driver overlay \
+    logging
+
+    docker volume create --driver rexray --opt size=7 --name esdata
+    ```
+
 1. Target the swarm manager to deploy the ELK stack (Elasticsearch, logstash and Kibana).
 
     ```
@@ -294,18 +304,12 @@ Swarm scales your services as containers on any node.  You get better utilizatio
     docker network create \
     --driver overlay \
     backend
-
-    docker network create \
-    --driver overlay \
-    logging
-    docker network ls
     ```
     
 1. Create named Docker volumes by taking advantage of the libStorage driver that REX-ray provides (see step 2 above)
 
     ```
     docker volume create --driver rexray --opt size=7 --name dbdata
-    docker volume create --driver rexray --opt size=7 --name esdata
     docker volume ls
     ```
 
