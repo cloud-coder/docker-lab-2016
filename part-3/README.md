@@ -239,6 +239,7 @@ The ELK stack will be used to provide centralized log collection for our contain
 1. First create the docker volumes and networks for the ELK stack
 
     ```
+    eval $(docker-machine env manager-1)
     docker network create \
     --driver overlay \
     logging
