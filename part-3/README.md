@@ -31,7 +31,7 @@ In order to scale your application workloads for production needs, you need to s
      manomarks/visualizer
      open http://$(docker-machine ip manager-1):5000
     ```
-1. Target the manager node, and make it the swarm master. Take note of command to join nodes to the swarm.  You will use this in the next step.
+1. Target the manager-1, and make it a swarm manager. Take note of the command to join nodes to the swarm.  You will use this in the next step.
 
     ```
     eval $(docker-machine env manager-1)
