@@ -183,8 +183,12 @@ Now test that shared storage works by creating a volume on worker-1 and validati
 
     ```
     eval $(docker-machine env manager-1)
-    docker service create --replicas 1 --name nginx -p 8080:80 --mount \      type=volume,source=hellopersistence,target=/usr/share/nginx/html,volume-driver=rexray \
+    docker service create --replicas 1 \
+    --name nginx \
+    -p 8080:80 \
+    --mount type=volume,source=hellopersistence,target=/usr/share/nginx/html,volume-driver=rexray \
     nginx
+    
     docker service ls
     docker service inspect --pretty nginx
     docker service ps nginx
