@@ -275,14 +275,14 @@ The ELK stack will be used to provide centralized log collection for our contain
     cascon/elk-kibana:latest
     ```
     
-1. Test That Kibana is running by going to port 5601 on any swarm node.
+1. Test that Kibana is running by going to port 5601 on any swarm node.  There is no data in Elastic search yet, so we will come back to Kibana to create an index after the app starts up in the next step.
 
     ```
     open http://$(docker-machine ip manager-1):5601
     ```
 
 # Step 5 - Run the app
-In this step, we will run the application you build in part 2.  This time though, we will run each container we defined in the Docker compose file, as a Docker 1.12+ service.  Services in Docker allow us to easily define scalable micro services that are highly available.  To learn more, I would recommend this [tutorial](https://docs.docker.com/engine/swarm/swarm-tutorial/) and this [video](https://www.youtube.com/watch?v=KC4Ad1DS8xU&). 
+In this step, we will run the application you built in part 2.  This time though, we will run each container we defined in the Docker compose file, as a Docker 1.12+ service.  Services in Docker allow us to easily define scalable micro services that are highly available.  To learn more, I would recommend this [tutorial](https://docs.docker.com/engine/swarm/swarm-tutorial/) and this [video](https://www.youtube.com/watch?v=KC4Ad1DS8xU&). 
 
 
 ## Traditional Stack
@@ -313,7 +313,7 @@ Swarm scales your services as containers on any node.  You get better utilizatio
     docker volume ls
     ```
 
-1. Create db service and connect it to the backend overlay network.  Note the `--mount type=volume,source=dbdata,target=/data/db,volume-driver=rexray` that mounts the named docker volume we created above.  This makes sure that if the db container dies, or needs to be created on another node, that its data is not lost.
+1. Create the db service, and connect it to the `backend` overlay network.  Note the `--mount type=volume,source=dbdata,target=/data/db,volume-driver=rexray` that mounts the named docker volume we created above.  This makes sure that if the db container dies, or needs to be created on another node, that its data is not lost.  Wait for the db to start up before running the next step (i.e. starting the api).
 
     ```
     docker service create \
@@ -324,10 +324,12 @@ Swarm scales your services as containers on any node.  You get better utilizatio
      -e MONGODB_USER=dba \
      -e MONGODB_DATABASE=mycars \
      -e MONGODB_PASS=dbpass \
+     --log-driver=gelf --log-opt gelf-address=udp://$(docker-machine ip manager-1):12201 \
      --mount type=volume,source=dbdata,target=/data/db,volume-driver=rexray \
      cascon/db:latest
     ```
-    
+1. Now that the db has started up, you can go back to Kibana to create an index.  Select the timestamp field as `@timestamp` and click the `create` button.  Now click the `Discover` tab at the top left of the UI.  You should see logs from mongodb!
+
 1. Create the api service, and connect it to the backend and frontend overlay networks.  Note the `--log-driver=gelf --log-opt gelf-address=udp://$(docker-machine ip manager-1):12201`.  This tells the container to use Docker's built in log driver for gelf.  The gelf format of log messages is one that logstash understands, and can be consumed by the ELK stack as such.
 
     ```
@@ -355,23 +357,22 @@ Swarm scales your services as containers on any node.  You get better utilizatio
     cascon/gateway:latest
     ```
     
-1. You can now go to any node on port 8080 to view the explorer API.  
+1. You can now go to any Swarm node on port 8080, and view the Strongloop explorer API.  
 
     ```
     open http://$(docker-machine ip worker-1):8080/explorer
     ```
     
-1. Make some REST POST calls to update data in the database. Make note of the updates, as you will validate that they are still there in the next step.
+1. Make some REST POST calls to update data in the database. 
     
 # Step 6 - Demo Ops
-1. Scale the nginx and strongloop to take on more load.
+1. Scale nginx to take on more load.
 
     ```
     docker service scale gateway=3
-    docker service scale api=3
     ```
     
-1. Drain the node that has the db.  This will force the db to be scheduled on another active node.
+1. Drain the node that has the api.  This will force the api to be scheduled on another active node.
 
     ```
     docker node update --availability drain <node>
