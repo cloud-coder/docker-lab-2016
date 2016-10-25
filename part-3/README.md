@@ -29,6 +29,7 @@ In order to scale your application workloads for production needs, you need to s
      -e HOST=$(docker-machine ip manager-1) \
      -v /var/run/docker.sock:/var/run/docker.sock \
      manomarks/visualizer
+     open http://$(docker-machine ip manager-1):5000
     ```
 1. Target the manager node, and make it the swarm master. Take note of command to join nodes to the swarm.  You will use this in the next step.
 
