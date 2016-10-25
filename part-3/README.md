@@ -334,8 +334,8 @@ Swarm scales your services as containers on any node.  You get better utilizatio
 
 
     ```
-    sudo -u mongodb mongod --repair --dbpath /data/db
-    sudo service mongod start
+    docker exec -t <containerid> "sudo -u mongodb mongod --repair --dbpath /data/db"
+    docker exec -t <containerid> "sudo service mongod start"
     ```
     
 1. Now that the db has started up, you can go back to Kibana to create an index.  Select the timestamp field as `@timestamp` and click the `create` button.  Now click the `Discover` tab at the top left of the UI.  You should see logs from mongodb!
