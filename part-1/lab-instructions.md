@@ -1,6 +1,6 @@
 # Basic Docker
 In this lab you will create a Docker container for a web server and load balancer known as **NGINX**. This container will be 
-used later as we build up our microservice solution in later labs. This lab will get you familiar with creating an image from
+used in later labs as we build up our microservice solution. This lab will get you familiar with creating an image from
  an existing image, and augmenting it using a Dockerfile so that you can have a repeatable and consistent way to create a container.
   NGINX will be running in a Docker Container and you will access the server from your local machine.
 
@@ -11,6 +11,11 @@ You will complete the following high level steps in this lab
 * Create a container from the custom image you built using a Dockerfile
 * Access the running webserver in your container and see your customizations
 * Learn basic docker commands to list, and delete images and containers.
+
+## Prerequisites 
+
+In order to complete this lab you will need to have Docker installed on your local machine.  Your lab machine already has this setup.  However, if you would like to do the lab outside of this session you can download and install the [Docker platform](https://www.docker.com/products/overview) yourself.
+
 
 ## Create a Docker container from Docker Hub
 The first part of this lab will be to create a Docker container running NGINX within it. A container is a running instance of an image.
@@ -50,7 +55,7 @@ using a public registry of images known as Docker Hub. We will search Docker Hub
 
 3. The first thing we will want to do is examine the file system of the container you have shelled into. 
 Change to the nginx html directory and have a look at the files that are there. 
-We will be adding a new file here later so it is good to see what is there right now.
+We will be adding a new file here later, so it is good to see what is there right now.
 
     ```bash
     cd /usr/share/nginx/html
@@ -89,14 +94,14 @@ just been done in the previous section.
 1. Open a new terminal window and leave the first terminal window running
 2. Run the CLI command to see a list of images you have on your machine.  You will see that your 
 local machine has the nginx Docker image that was pulled from Docker Hub via the run command above
- and cached on your local machine:
+ and cached on your local machine (NOTE: you will see other images as well as we cached other images to save time during the labs):
 
     ```bash
     docker images
     ```
     ![alt](../images/picture4.png "docker images")
 
-3. Run the CLI command to see a list of running containers on your machine.
+3. In the new terminal window, run the CLI command to see a list of running containers on your machine.
     ```bash
     docker ps
     ```
@@ -290,10 +295,11 @@ delete the container with the following command.
 
     ![alt](../images/picture7.png 'docker images listing')
 
-2.  Find the image you want to delete, make note of the IMAGE ID, and run the docker command to delete images:
+2.  Find the image you want to delete (i.e. mynginx), make note of the IMAGE ID, and run the docker command to delete images:
 
     ```bash
     docker rmi <IMAGE ID>
+    docker images
     ```
     > NOTE: You may get an error deleting the image if there are any containers remaining that reference the image.  You will see 
     > an error similar to the one below.  If you encounter that error you will need to go back an delete any containers that reference
@@ -311,5 +317,5 @@ You have now completed the basic Docker lab.  Let's recap what you learned in th
 * You explored the NGINX container you created from the Docker Hub image
 * You created your own NGINX image using Dockerfile that allowed you to customize the base NGINX image with repeatable instructions
 * You created a container from the custom image you built using a Dockerfile
-* You accessed the running webserver in your container and see your customizations 
+* You accessed the running webserver in your container and saw your customizations 
 * You learned basic docker commands to list, and delete images and containers.
