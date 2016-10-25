@@ -335,7 +335,9 @@ Swarm scales your services as containers on any node.  You get better utilizatio
 
     ```
     docker service rm db
-    docker run -d --volume-driver=rexray -v dbdata:/data/db cascon/db:latest "mongod --repair --dbpath /data/db"
+    docker run -it --volume-driver=rexray -v dbdata:/data/db cascon/db:latest bash
+    mongod --repair --dbpath /data/db
+    exit
     
     docker service create \
      --name db \
