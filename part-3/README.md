@@ -394,7 +394,7 @@ Swarm scales your services as containers on any node.  You get better utilizatio
     docker service update --env-add UPDATE=1 api
     ```
 
-1. Now validate that the database data is still there from step 5.  Again go to `http://$(docker-machine ip worker-1):8080/explorer`
+1. Now validate that the data is still there from step 5.  Again go to `http://$(docker-machine ip worker-1):8080/explorer`
 
 
 
