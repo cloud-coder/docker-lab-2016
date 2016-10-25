@@ -268,7 +268,7 @@ The ELK stack will be used to provide centralized log collection for our contain
 1. Test That Kibana is running by going to port 5601 on any swarm node.
 
     ```
-    open $(docker-machine ip manager-1):5601
+    open http://$(docker-machine ip manager-1):5601
     ```
 
 # Step 5 - Run the app
