@@ -14,4 +14,4 @@ There are three parts to this lab.
 [Lab2](part-2/lab-instructions.md) - Docker compose and building multiple containers that work together
 
 ## Part 3
-[Demo](part-3/README.md) using Docker Swarm 1.12 to turn a group of VMs into a single virtual Docker engine.
+[Demo](part-3) using Docker Swarm 1.12 to turn a group of VMs into a single virtual Docker engine.
