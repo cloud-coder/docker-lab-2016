@@ -45,14 +45,14 @@ In order to scale your application workloads for production needs, you need to s
     eval $(docker-machine env worker-2)
     ```
 
-1. Target a manager node again, and docker view all of the nodes in the swarm.
+1. Target a manager node again, and view all of the nodes in the swarm.
 
     ```
     eval $(docker-machine env manager-1)
     docker node ls
     ```
 
-1. A simple 3 node swarm is now setup.  The above steps were adapted from [Getting started with swarm mode](https://docs.docker.com/engine/swarm/swarm-tutorial/).  You can view details of your swarm with docker info on a manager node.
+1. A simple 3 node swarm is now setup.  The above steps were adapted from [Getting started with swarm mode](https://docs.docker.com/engine/swarm/swarm-tutorial/).  You can view details of your swarm with the following:
 
     ```
     eval $(docker-machine env manager-1)
@@ -62,7 +62,7 @@ In order to scale your application workloads for production needs, you need to s
 # Step 2 - Setup shared storage between VMs
 The Swarm will distrubute containers amongst VMs wherever there are resources available.  You can constrain where certain containers are run, but to have a truly scalable system, you should try to avoid that.  This means that containers that save state, need to mount volumes from a shared storage.  You could use NFS or some other block storage for this.  Docker provides a `volume driver` plugin framework.  Many third party storage providers are creating drivers.  In this tutorial, we will use EMC's [REX-Ray](http://rexray.readthedocs.io/en/stable/), since it works well with virtualbox.
 
-1. Make sure that Virtualbox authentication is disabled to make the demo easier to complet and start the HTTP SOAP API.
+1. Make sure that Virtualbox authentication is disabled to make the demo easier to complete, and start the HTTP SOAP API.
 
     ```
     VBoxManage setproperty websrvauthlibrary null && vboxwebsrv --background
