@@ -179,7 +179,7 @@ Now test that shared storage works by creating a volume on worker-1 and validati
     docker rm -f temp01
     ```
     
-1.  Now we will test with a Docker 1.12+ service, instead of a standalone container.  Remember to target a manager node when deploying services.
+1.  Now we will test with a Docker 1.12+ service, instead of a standalone container.  Remember to target a manager node when deploying services.  Wait for the service to start.
 
     ```
     eval $(docker-machine env manager-1)
@@ -191,7 +191,8 @@ Now test that shared storage works by creating a volume on worker-1 and validati
     
     docker service ls
     docker service inspect --pretty nginx
-    docker service ps nginx
+    docker service ps nginx //You will see what node nginx is running on, and then you can go to that node
+    //Once on the node, docker exec <containerid> ls /usr/share/nginx/html and you should see myfile
     docker service rm nginx
     ```
     
