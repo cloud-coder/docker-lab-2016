@@ -1,15 +1,15 @@
-# Workshop - Part 2
-This lab offers an introduction to concepts and commands used in Docker Compose tool. We reinforce the concepts by taking a simple web application which is made up of three containers, and define a Compose file for it. And start, stop and scale the application using this compose file.
+# Part 2 - Docker Compose
+This lab is an introduction to concepts and commands used in the Docker Compose tool. We reinforce the concepts by taking a simple web application made up of three containers, and define a Compose file for it. We then start, stop and scale the application using this compose file.
 
-Upon completing this lab you learn:
+Upon completing this lab you will learn:
 * Docker Compose concepts and commands
 * How to build a multi-container application
 * How to start, scale and view container logs
 
-## Docker Compose
-Typically applications are made up of two or more separate runtimes. For instance a web application has a runtime where web artifacts are served, but it also would requires other capabilities such as database, caching, gateway, messaging, etc. In a Container based solution, each capability is hosted in its own container. Separating capabilities in their own containers in this manner allow a solution the flexibility to scale each of these components according to the application usage patterns and needs. This flexibility adds some level of complexity, because now a single application has dependencies on several components and these dependencies are not readily evident.
+## Overview
+Typically applications are made up of two or more separate runtimes. For instance a web application has a runtime where web artifacts are served, but it would also require other capabilities such as database, caching, gateway, messaging, etc. In a Container based solution, each capability is hosted in its own container. Separating capabilities in their own containers allows a solution the flexibility to scale each of these components according to the application usage patterns and needs. This flexibility adds some level of complexity as a single application now has dependencies on several components, and these dependencies are not readily evident.
 
-Docker Compose is a tool that allows defining a multi container application in a single file. Therefore to take advantage of Docker Compose all you really need is to create the Compose file and use your containers.
+Docker Compose is a tool that allows defining a multi container application into a single file. Therefore, to take advantage of Docker Compose all you really need is to create the Compose file and use your containers.
 
 To start your application and all its components (services), you need the following:
 1. A *Docker container* _per service_ (e.g. web, db...): you already know how to create a Docker container. It is important that the container you create is defined using a Dockerfile, rather than manually created and committed.
@@ -23,17 +23,17 @@ Docker Compose is useful for a single host environment like development or test/
 The sample application that we are using for this lab has three services:
 * Database (MongoDB)
 * Web runtime (Node)
-* Gateway (Nginx)
+* Gateway (NGINX)
 
-If we were to set up a development environment for such an application, we would have done the following:
-* Install all the three runtimes in our local machine
+If we were to set up a traditional development environment for such an application, we would have done the following:
+* Install all the three runtimes on our local machine
 * Add the sample test data to the database
 * Add the application code and configuration
 * Configure the gateway 
 
-However using container based approach, none of these steps are necessary. A developer can simply pull the relevant containers into their local machine and start all the three containers to get a functioning application. However, there would be some inconveniences with this approach, such as considerations for networking such as db server host name (accessed from the web server), or gateway configuration (referencing the web server). We can improve on this already convenient situation by using a Compose file. All we need to do is define the Compose file representing this application, and then build and run the application in a single command. This approach also addresses the networking and storage concerns. It provides a consistent configuration across all developer machines. This will later be extended into production settings, as you will see in next lab.
+Using a container based approach none of these steps are necessary. A developer can simply pull the relevant containers into their local machine and start all the three containers to get a functioning application. However, there would be some inconveniences with this approach, such as considerations for networking, db server host name (accessed from the web server), or gateway configuration (referencing the web server). We can improve on this already convenient situation by using a Compose file. All we need to do is define the Compose file representing this application, and then build and run the application in a single command. This approach also addresses the networking and storage concerns. It provides a consistent configuration across all developer machines. This will later be extended into production settings, as you will see in next lab.
 
-As mentioned earlier, we first create the necessary container images by creating the relevant Dockerfiles, then create Compose file and finally start the application. The creation of the images is what we already covered in the first lab. Additionally the creation of the API app is out of scope for this lab, therefore we will just clone a repository that already has all these steps taken.
+As mentioned earlier, we first create the necessary container images by creating the relevant Dockerfiles, then create Compose file and finally start the application. The creation of the images is what we already covered in the first lab. Additionally, the creation of the API app is out of scope for this lab, therefore we will just clone a repository that already has all these steps completed.
 
 1. Open a command prompt and execute the following commands
 ```bash
@@ -58,7 +58,7 @@ MONGODB_USER=dba
 MONGODB_DATABASE=mycars
 MONGODB_PASS=dbpass
 ```
-We look at how to set these enviornment variables in the Compose file later.
+We will look at how to set these enviornment variables in the Compose file later.
 
 ### API Container
 We are using a StrongLoop Loopback application that offers a single endpoint (_/api/Cars_) to perform simple create/read/update/delete (CRUD) operations. The Dockerfile for the image is located at `~/workshop/docker-lab-2016/part-2/strongloop/Dockerfile`. The contents of the file are:
@@ -119,9 +119,9 @@ location /api {
 ## Converting to Docker Compose
 As mentioned earlier, it is inconvenient to work with three separate containers and start/stop them one at a time, or to work out the networking concerns. Therefore we will use a Compose file to define the composition of our application. In our application, we have three distinct services, these three services are: db, api and gateway. We will reference these services, with their configuration and dependencies in a single file and link them together.
 
-A Compose file is defined using YAML format. It contains _services_, _networking_ and _volume_ information for the application.
+A Compose file is defined using the YAML format. It contains _services_, _networking_ and _volume_ information for the application.
 >**Note**
-> There are two versions of Compose files. We use the version 2 definition.
+> There are two versions of Compose files. We will use the version 2 definition.
 
 ### Docker Compose File
 For your convenience the Compose file is already created and available at `~/workshop/docker-lab1/part-2/docker-compose.yml`. Open this file in an editor and let's examine its contents.
@@ -137,10 +137,10 @@ The Compose file has two top level definitions: _services_ and _networks_
 
 In the _services_ section we define the three _db_, _api_ and _gateway_ services. And in the _networks_ section we define the two networks: _frontend_ and _backend_, which we will use to place each service in.
 
-When a service (i.e. container) is placed in a network, it can only communicate with other containers that are in the same network. This allows a level separation/security, where for example a gateway container cannot communicate with the database container.
+When a service (i.e. container) is placed in a network, it can only communicate with other containers that are in the same network. This allows a level of separation/security, where for example a gateway container cannot communicate with the database container.
 
-Below is the _networks_ definition, and we are currently using a bridge configuration.
->**Note** There is another possibility for network definition called _overlay_, which we will see in the Docker Swarm configuration in the next demo. 
+Below is the _networks_ definition, and we are currently using a bridge configuration (which is the default).  The values you see below using _overlay_ you will notice are commented out for now.
+>**Note** There is another network definition called _overlay_, which we will see in the Docker Swarm configuration in the next demo.
 ```yaml
 networks:
   frontend:
@@ -232,7 +232,7 @@ part2_api_1       ./start.sh             Up       0.0.0.0:3000->3000/tcp
 part2_db_1        /run.sh                Up       0.0.0.0:27017->27017/tcp, 0.0.0.0:28017->28017/tcp 
 part2_gateway_1   nginx -g daemon off;   Exit 1                                                      
 ```
-This means that the _db_ and _api_ services started properly, but the _gateway_ service did not.
+This means that the _db_ and _api_ services started properly, but the _gateway_ service did not (e.g. Exit 1 state).
 
 ### Determine Problems
 So let's see if we can look at the log files for the _gateway_ service and determine what went wrong.
@@ -288,7 +288,7 @@ curl "http://localhost:8080/api/Cars"
 
 > **Note:** The response does not have a new line at the end of it, so the prompt shows up right at the end of the response, which makes it harder to read. You can always redirect your responses to a file or more command if you like further clarity.
 
-3. Let's invoke a POST API call and add a Car
+3. Let's invoke a POST API call and add a Car using the curl utility
 ```bash
 curl -X POST "http://localhost:8080/api/Cars" -d '{ "model": "Focus", "make": "Ford", "year": 2016, "miles": 1000 }'
 ```
