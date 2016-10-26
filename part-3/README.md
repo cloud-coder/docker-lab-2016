@@ -174,6 +174,7 @@ Now test that shared storage works by creating a volume on worker-1 and validati
 1. Now target worker-2, and startup a new container there.  We mount the same named volume into the new container, and you should see the same `myfile` listed.
 
     ```
+    eval $(docker-machine env worker-2)
     docker run -tid --volume-driver=rexray -v hellopersistence:/mystore --name temp01 busybox
     docker exec temp01 ls /mystore
     docker rm -f temp01
