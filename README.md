@@ -8,10 +8,10 @@ There are three parts to this lab.
 
 ## Part 1
 
-[Lab 1](part-1/lab-instructions.md) - Basic Docker lab, and creating a container with a web server
+[Lab 1](part-1/README.md) - Basic Docker lab, and creating a container with a web server
 
 ## Part 2
-[Lab2](part-2/lab-instructions.md) - Docker compose and building multiple containers that work together
+[Lab2](part-2/README.md) - Docker compose and building multiple containers that work together
 
 ## Part 3
 [Demo](part-3) using Docker Swarm 1.12 to turn a group of VMs into a single virtual Docker engine.
