@@ -400,7 +400,7 @@ Swarm scales your services as containers on any node.  You get better utilizatio
 1. Make some REST POST calls to update data in the database. 
     
 # Step 6 - Demo Ops
-[Watch on YouTube]()
+[Watch on YouTube](https://www.youtube.com/watch?v=Lbyl8lmmLJ0&index=6&list=PLKWiGyDcaq_ZT_dYqneTxsc5OglDrj_ap)
 
 1. Scale nginx to take on more load.
 
