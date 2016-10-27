@@ -7,6 +7,8 @@ In order to scale your application workloads for production needs, you need to s
 1. Have a [Docker Hub](https://hub.docker.com/) account
 
 # Step 1 - Setup Docker Swarm
+[Watch on YouTube](https://www.youtube.com/watch?v=xKtNXR6mzSU&index=1&list=PLKWiGyDcaq_ZT_dYqneTxsc5OglDrj_ap)
+
 1. Use docker-machine to provision Docker engine on three nodes (i.e. vms).
     
     ```
@@ -61,6 +63,8 @@ In order to scale your application workloads for production needs, you need to s
     
 # Step 2 - Setup shared storage between VMs
 The Swarm will distrubute containers amongst VMs wherever there are resources available.  You can constrain where certain containers are run, but to have a truly scalable system, you should try to avoid that.  This means that containers that save state, need to mount volumes from a shared storage.  You could use NFS or some other block storage for this.  Docker provides a `volume driver` plugin framework.  Many third party storage providers are creating drivers.  In this tutorial, we will use EMC's [REX-Ray](http://rexray.readthedocs.io/en/stable/), since it works well with virtualbox.
+
+[Watch on YouTube](https://www.youtube.com/watch?v=tE4wHXY3LxM&list=PLKWiGyDcaq_ZT_dYqneTxsc5OglDrj_ap&index=2)
 
 1. Make sure that Virtualbox authentication is disabled to make the demo easier to complete, and start the HTTP SOAP API.
 
@@ -206,6 +210,8 @@ Now test that shared storage works by creating a volume on worker-1 and validati
 # Step 3 - Build Docker Images
 We will build and push images to Docker Hub.  Don't forget to log into Docker Hub, and also to change the image names.  That is, you will not have permission to push images to `cascon/*` organization. NOTE: Make sure you are in the `part-3` directory before running the commands below.
 
+[Watch on YouTube](https://www.youtube.com/watch?v=6vONa3OBTmY&list=PLKWiGyDcaq_ZT_dYqneTxsc5OglDrj_ap&index=3)
+
 1. Log into Docker Hub
 
     ```
@@ -236,6 +242,8 @@ We will build and push images to Docker Hub.  Don't forget to log into Docker Hu
  
 # Step 4 - Run the ELK stack
 The ELK stack will be used to provide centralized log collection for our containers.
+
+[Watch on YouTube](https://www.youtube.com/watch?v=exYiTAJah4E&list=PLKWiGyDcaq_ZT_dYqneTxsc5OglDrj_ap&index=4)
 
 1. First create the docker volumes and networks for the ELK stack
 
@@ -286,6 +294,7 @@ The ELK stack will be used to provide centralized log collection for our contain
 # Step 5 - Run the app
 In this step, we will run the application you built in part 2.  This time though, we will run each container we defined in the Docker compose file, as a Docker 1.12+ service.  Services in Docker allow us to easily define scalable micro services that are highly available.  To learn more, I would recommend this [tutorial](https://docs.docker.com/engine/swarm/swarm-tutorial/) and this [video](https://www.youtube.com/watch?v=KC4Ad1DS8xU&). 
 
+[Watch on YouTube](https://www.youtube.com/watch?v=1s4ppXHZbDo&list=PLKWiGyDcaq_ZT_dYqneTxsc5OglDrj_ap&index=5)
 
 ## Traditional Stack
 Now you have to scale app services with traditional means.  You get less utilization of VMs.
@@ -391,6 +400,8 @@ Swarm scales your services as containers on any node.  You get better utilizatio
 1. Make some REST POST calls to update data in the database. 
     
 # Step 6 - Demo Ops
+[Watch on YouTube]()
+
 1. Scale nginx to take on more load.
 
     ```
