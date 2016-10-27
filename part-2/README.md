@@ -169,6 +169,7 @@ communicate with the database container.
 1.  Ensure you are still editing _docker-compose.yml_
 2.  Enter the details of the gateway service into the file.  The following lines should go between 
 the _services:_ line and the _networks:_ line and indented 2 spaces:
+    
     ```yaml
        gateway:
           build: ./gateway
@@ -293,7 +294,9 @@ networks:
 Now we have an application that is ready to be started and tested as a Docker Compose application.
 
 ### Start the Application
+
 First start the compose the application
+
 1. Open a command prompt
 2. Navigate to the `~/workshop/docker-lab1/part-2` directory
     ```bash
@@ -324,6 +327,7 @@ in the first lab, you can use `docker-compose ps` command to verify the status o
     docker-compose ps
     ```
 2.  Verify that see something similar to the results below:
+
     ```
         Name               Command          State                          Ports                        
     ----------------------------------------------------------------------------------------------------
