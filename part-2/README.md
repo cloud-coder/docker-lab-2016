@@ -208,9 +208,9 @@ the gateway service defintion. The following lines should go after the gateway s
           - "db"
     ```
 The new configuration items are:
-* **enviornment:** Defines environment variables that will be set in the container when it starts
-* **volumes:** Defines the volumes that will be mounted in the container
-* **depends_on:** Defines that this service (i.e. *api*) depends on the the *db* service, and should start only when *db* is started.
+ * **enviornment:** Defines environment variables that will be set in the container when it starts
+ * **volumes:** Defines the volumes that will be mounted in the container
+ * **depends_on:** Defines that this service (i.e. *api*) depends on the the *db* service, and should start only when *db* is started.
 
 > **Note:** This is a soft dependency, and it only means that the container is started. However the actual process and the bootstraping steps to make the service truly available is not considered. There are other custom approaches that can be used to make this dependency more specific.
 
