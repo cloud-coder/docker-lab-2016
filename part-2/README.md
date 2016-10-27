@@ -12,6 +12,7 @@ Typically applications are made up of two or more separate runtimes. For instanc
 Docker Compose is a tool that allows defining a multi container application into a single file. Therefore, to take advantage of Docker Compose all you really need is to create the Compose file and use your containers.
 
 To start your application and all its components (services), you need the following:
+
 1. A *Docker container* _per service_ (e.g. web, db...): you already know how to create a Docker container. It is important that the container you create is defined using a Dockerfile, rather than manually created and committed.
 2. You also need a *Compose file* that defines all the services that make up your application. The default name that the tool looks for is called *docker-compose.yml*.
 3. You can now start the application, with all its parts (services), using the `docker-compose up` command (from the same directory where the compose file is located)
