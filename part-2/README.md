@@ -299,10 +299,12 @@ First start the compose the application
 
 1. Open a command prompt
 2. Navigate to the `~/workshop/docker-lab1/part-2` directory
+
     ```bash
     cd ~/workshop/docker-lab1/part-2
     ```
 3. Start the Compose application using the -d switch to run it in the background
+
     ```bash
     docker-compose up -d
     ```
@@ -323,9 +325,11 @@ how do we determine if all the services started? Similar to the `docker ps` comm
 in the first lab, you can use `docker-compose ps` command to verify the status of each container.
 
 1. Let's examine if all the services are running by running the following command in the same command prompt.
+
     ```
     docker-compose ps
     ```
+    
 2.  Verify that see something similar to the results below:
 
     ```
@@ -343,6 +347,7 @@ The status shows us that the _db_ and _api_ services started properly, but the _
 So let's see if we can look at the log files for the _gateway_ service and determine what went wrong.
 
 1. Execute the command below to get the logs for the _gateway_ service
+
     ```
     docker-compose logs gateway
     ```
@@ -390,12 +395,14 @@ service defintion should look as follows:
     ```
   
     If all goes well, you will see a message like below:
+    
     ```
     Starting db ... done
     Starting api ... done
     Starting gateway ... done
     ```
 4.  Let's make sure that everything is running:
+
   ```
   docker-compose ps
   ```
@@ -414,11 +421,13 @@ service defintion should look as follows:
 The application is up and running, so let's see if we can invoke the API on the Nginx server and go all the way to the database and back.
 
 1. Let's first see if there are any Cars in the database
+
     ```bash
     curl "http://localhost:8080/api/Cars"
     ```
 
 2. You will see an empty array as the response, which means we don't have any Cars
+
     ```
     []
     ```
@@ -426,6 +435,7 @@ The application is up and running, so let's see if we can invoke the API on the 
     > **Note:** The response does not have a new line at the end of it, so the prompt shows up right at the end of the response, which makes it harder to read. You can always redirect your responses to a file or more command if you like further clarity.
 
 3. Let's invoke a POST API call and add a Car using the curl utility
+
     ```bash
     curl -X POST "http://localhost:8080/api/Cars" -d '{ "model": "Focus", "make": "Ford", "year": 2016, "miles": 1000 }'
     ```
@@ -442,6 +452,7 @@ The application is up and running, so let's see if we can invoke the API on the 
     ```
 
     You should see a result similar to below, with a different ID perhaps:
+    
     ```
     {"id":"580b87f79b70522c0037824e","{ \"model\": \"Focus\", \"make\": \"Ford\", \"year\": 2016, \"miles\": 1000 }":""}
     ```
@@ -457,11 +468,13 @@ The application is up and running, so let's see if we can invoke the API on the 
 Now that we have validated that the application is running correctly, we can look at a few more commands.
 
 1. Stop the Compose application
+
 ```bash
 docker-compose stop
 ```
 
 You will see a result like below:
+
 ```
 Stopping part2_api_1 ... done
 Stopping part2_db_1 ... done
@@ -469,6 +482,7 @@ Stopping part2_gateway_1 ... done
 ```
 
 2. Validate the services are stopped
+
 ```bash
 docker-compose ps
 ```
