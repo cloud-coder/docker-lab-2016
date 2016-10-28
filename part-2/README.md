@@ -1,12 +1,17 @@
 # Part 2 - Docker Compose
-This lab is an introduction to concepts and commands used in the Docker Compose tool. We reinforce the concepts by taking a simple web application made up of three containers, and define a Compose file for it. We then start, stop and scale the application using this compose file.
+
+## Overview
+
+This lab is an introduction to concepts and commands used in the Docker 
+Compose tool. We reinforce the concepts by taking a simple web application 
+made up of three containers, and define a Compose file for it. We then start, 
+stop and scale the application using this compose file.
 
 Upon completing this lab you will learn:
 * Docker Compose concepts and commands
 * How to build a multi-container application
 * How to start, scale and view container logs
 
-## Overview
 Typically applications are made up of two or more separate runtimes. For instance a web application has a runtime where web artifacts are served, but it would also require other capabilities such as database, caching, gateway, messaging, etc. In a Container based solution, each capability is hosted in its own container. Separating capabilities in their own containers allows a solution the flexibility to scale each of these components according to the application usage patterns and needs. This flexibility adds some level of complexity as a single application now has dependencies on several components, and these dependencies are not readily evident.
 
 Docker Compose is a tool that allows defining a multi container application into a single file. Therefore, to take advantage of Docker Compose all you really need is to create the Compose file and use your containers.
@@ -19,31 +24,59 @@ To start your application and all its components (services), you need the follow
 
 Docker Compose is useful for a single host environment like development or test/build. A developer can run different versions of the same application in their local machine and without worrying about conflicting dependencies.
 
+## Table of contents
+1. [Gather Lab Files](#gather-lab-files)
+2. [Review containers](#review-containers)
+3. [Create Docker Compose File](#create-docker-compose-file)
+    * [Define Networks in the Compose File](#define-networks-in-the-compose-file)
+    * [Define Services in the Compose File](#define-services-in-the-compose-file)
+4. [Verify Compose File](#verify-compose-file)
+5. [Run Docker Compose Commands](#run-docker-compose-commands)
+6. [Test the API](#test-the-api)
+7. [More Docker Compose Commands](#more-docker-compose-commands)
+8. [References](#references)
 
 ## Gather Lab Files
 The sample application that we are using for this lab has three services:
-* Database (MongoDB)
-* Web runtime (Node)
-* Gateway (NGINX)
+* Database (MongoDB) which we willl refer to as **_db_**
+* Web runtime (Node) which we will refer to as **_api_**
+* Gateway (NGINX) which we will refer to as **_gateway_**
 
-If we were to set up a traditional development environment for such an application, we would have done the following:
-* Install all the three runtimes on our local machine
-* Add the sample test data to the database
-* Add the application code and configuration
-* Configure the gateway 
+If we were to set up a traditional development environment for such an application,
+ we would have done the following:
+* Installed all the three runtimes on our local machine
+* Added the sample test data to the database
+* Added the application code and configuration
+* Configured the gateway 
 
-Using a container based approach none of these steps are necessary. A developer can simply pull the relevant containers into their local machine and start all the three containers to get a functioning application. However, there would be some inconveniences with this approach, such as considerations for networking, db server host name (accessed from the web server), or gateway configuration (referencing the web server). We can improve on this already convenient situation by using a Compose file. All we need to do is define the Compose file representing this application, and then build and run the application in a single command. This approach also addresses the networking and storage concerns. It provides a consistent configuration across all developer machines. This will later be extended into production settings, as you will see in next lab.
+Using a container based approach none of these steps are necessary. A developer can simply 
+pull the relevant containers into their local machine and start all the three containers 
+to get a functioning application. However, there would be some inconveniences with this 
+approach, such as considerations for networking, db server host name (accessed from the 
+web server), or gateway configuration (referencing the web server). We can improve on 
+this already convenient situation by using a Compose file. All we need to do is define 
+the Compose file representing this application, and then build and run the application 
+in a single command. This approach also addresses the networking and storage concerns. It 
+provides a consistent configuration across all developer machines. This will later be extended
+ into production settings, as you will see in next lab.
 
-As mentioned earlier, we first create the necessary container images by creating the relevant Dockerfiles, then create Compose file and finally start the application. The creation of the images is what we already covered in the first lab. Additionally, the creation of the API app is out of scope for this lab, therefore we will just clone a repository that already has all these steps completed.
+As mentioned earlier, we first create the necessary container images by creating the
+ relevant Dockerfiles, then create Compose file and finally start the application. The 
+ creation of the images is what we already covered in the first lab. Additionally,
+  the creation of the API app is out of scope for this lab, therefore we will just 
+  clone a repository that already has all these steps completed.
 
 1. Open a command prompt and execute the following commands
-```bash
-cd ~/workshop
-git clone https://github.com/cloud-coder/docker-lab-2016.git
-cd docker-lab-2016/part-2
-```
+
+    ```bash
+    cd ~/workshop
+    git clone https://github.com/cloud-coder/docker-lab-2016.git
+    cd docker-lab-2016/part-2
+    ```
+
 2. Verify you see the three directories: _db, gateway and strongloop_
-3. Verify that _solution_ diretory is there too.  This directory will contain solution files for the lab.
+3. Verify that _solution_ diretory is there as well.  This directory will contain
+ solution files for the lab.
 
 ## Review containers
 
@@ -64,7 +97,10 @@ MONGODB_PASS=dbpass
 We will look at how to set these enviornment variables in the Compose file later.
 
 ### API Container
-We are using a StrongLoop Loopback application that offers a single endpoint (_/api/Cars_) to perform simple create/read/update/delete (CRUD) operations. The Dockerfile for the image is located at `~/workshop/docker-lab-2016/part-2/strongloop/Dockerfile`. The contents of the file are:
+We are using a StrongLoop Loopback application that offers a single endpoint (_/api/Cars_)
+ to perform simple create/read/update/delete (CRUD) operations. The Dockerfile for the 
+ image is located at `~/workshop/docker-lab-2016/part-2/strongloop/Dockerfile`. The 
+ contents of the file are:
 ```dockerfile
 FROM sgdpro/nodeslc
 
@@ -77,9 +113,12 @@ VOLUME /home/strongloop/app
 CMD [ "./start.sh" ]
 ```
 
-And the application source code is in the `~/workshop/docker-lab-2016/part-2/strongloop/app` directory.
-
-This is a simple API server application based on Loopback. In addition to adding a Car model, the only external configuration change made is in the `~/workshop/docker-lab1/part-2/strongloop/app/server/datasources.json` file, which contains datasource connectivity information, and in our case refers to the MongoDB database in its container. The _memdb_ definition is there by default, we only added the second definition for our own MongoDB server
+This is a simple API server application based on Loopback. In addition to adding a 
+Car model, the only external configuration change made is in 
+the `~/workshop/docker-lab1/part-2/strongloop/app/server/datasources.json` file, 
+which contains datasource connectivity information, and in our case refers to the 
+MongoDB database in its container. The _memdb_ definition is there by default, we 
+only added the second definition for our own MongoDB server
 
 ```json
 {
@@ -105,7 +144,10 @@ This is a simple API server application based on Loopback. In addition to adding
 > We are refering to the database host name simply as _db_. This would work only if the application container could translate db to the actual IP of the db container, or somehow use a DNS make this translation (perhaps using _/etc/hosts_). This is where Docker Compose and its networking capabilities come in handy. The usage of _link_ in Docker Compose is deprecated, so we will not discuss this in this lab.
 
 ### Gateway Container
-We expose the API offered by our application through an Nginx server. You are already familiar with Nginx from the first the lab. The Dockerfile for this container is located in the `~/workshop/docker-lab1/part-2/gateway/Dockerfile` directory. Its contents are:
+We expose the API offered by our application through an Nginx server. You are already 
+familiar with Nginx from the first the lab. The Dockerfile for this container is
+ located in the `~/workshop/docker-lab1/part-2/gateway/Dockerfile` directory. Its contents are:
+
 ```dockerfile
 FROM nginx
 COPY sample_app_nginx.conf /etc/nginx/nginx.conf
@@ -121,8 +163,9 @@ location /api {
 
 ## Create Docker Compose File
 As mentioned earlier, it is inconvenient to work with three separate containers and start/stop them one at a time, or to work out the networking concerns. Therefore 
-we will use a Compose file to define the composition of our application. In our application, we have three distinct services, these three services are: db, 
-api and gateway. We will reference these services, with their configuration and dependencies in a single file and link them together.
+we will use a Compose file to define the composition of our application. In our application, 
+we have three distinct services, these three services are: _db, 
+api and gateway_. We will reference these services, with their configuration and dependencies in a single file and link them together.
 
 A Compose file is defined using the YAML format. It contains _services_, _networking_ and _volume_ information for the application.
 >**Note**
@@ -134,12 +177,13 @@ defining those sections
 
 ### Define Networks in the Compose File
 
-In the _networks_ section we define the two networks: _frontend_ and _backend_, which we will use to place 
-each service in.
+In the _networks_ section we define the two networks: _frontend_ and _backend_, which we will 
+use to place each service in.
 
 1.  Change to ```~/workshop/docker-lab-2016/part2```
 2.  Create a file called _docker-compose.yml_
-3.  Enter the following into the file to define your networks and an empty services section:
+3.  Enter the following into the file to define your networks, and an empty services section:
+    
     ```yaml
     version: "2"
     
@@ -155,8 +199,8 @@ each service in.
 > **Note** We are using 2 spaces for indentation
 
 In the _networks_ definition above we are using a bridge configuration (which is the default).  The values 
-you see below using _overlay_ you will notice are commented out for now.  We will leverage the _overlay_ definition
-in the Docker Swarm configuration in the next demo.
+you see above using _overlay_ you will notice are commented out for now.  We will leverage the 
+_overlay_ definition in the Docker Swarm configuration in the next demo.
 
 ### Define Services in the Compose File
 
@@ -167,7 +211,7 @@ communicate with the database container.
 
 #### Define Gateway Service 
 1.  Ensure you are still editing _docker-compose.yml_
-2.  Enter the details of the gateway service into the file.  The following lines should go between 
+2.  Enter the details of the _gateway_ service into the file.  The following lines should go between 
 the _services:_ line and the _networks:_ line and indented 2 spaces:
     
     ```yaml
@@ -189,8 +233,8 @@ configuration items:
 #### Define API Service 
 
 
-1. Enter the details of the api service into the yaml file as a child of the 'services' definition after
-the gateway service defintion. The following lines should go after the gateway service definition and before the networks section
+1. Enter the details of the _api_ service into the yaml file as a child of the _services_ definition after
+the _gateway_ service defintion. The following lines should go after the _gateway_ service definition and before the _networks_ section
 
     ```yaml
       api:
@@ -217,8 +261,8 @@ The new configuration items are:
 
 #### Define DB Service
 
-1.  Enter the details of the db service into the yaml file as a child of the 'services' definition after the 
-api defintion.  The following lines should go after the api service and before the networks section
+1.  Enter the details of the _db_ service into the yaml file as a child of the _services_ definition after the 
+_api_ defintion.  The following lines should go after the _api_ service and before the _networks_ section
 
     ```yaml
     db:
@@ -236,7 +280,7 @@ api defintion.  The following lines should go after the api service and before t
     ```
 
 The _db_ service does not have any new definitions, it just defines multiple port and environment 
-variable definitions.
+variable definitions that were mentioned earlier in the lab.
 
 ## Verify Compose File
 
@@ -309,8 +353,8 @@ First start the compose the application
     docker-compose up -d
     ```
 This command will trigger a build, and then start each service, considering the dependencies.
-
 You will see results like below:
+
 ```
 Creating network "part2_frontend" with the default driver
 Creating network "part2_backend" with the default driver
@@ -390,7 +434,9 @@ service defintion should look as follows:
     ```
 
     If you run into issues we have included a complete version solutions directory 
-    [docker-compose-2.yml](solution/docker-compose-2.yml), if you need it.
+    [docker-compose-2.yml](solution/docker-compose-2.yml), if you need it.  You can replace the
+    docker-compose.yml file in the part-2 directory with the solution file.  Please ensure the file
+    get renamed to docker-compose.yml.
     
 3. Let's go ahead and stop the compose application, take the containers down,
  and restart the compose application with the updated Compose file:
@@ -414,20 +460,21 @@ service defintion should look as follows:
   docker-compose ps
   ```
 
-  The result should be something like below, where all the services have an **Up** state:
-  
-  ```
-      Name               Command          State                         Ports                        
-  ---------------------------------------------------------------------------------------------------
-  part2_api_1       ./start.sh             Up      0.0.0.0:3000->3000/tcp                             
-  part2_db_1        /run.sh                Up      0.0.0.0:27017->27017/tcp, 0.0.0.0:28017->28017/tcp 
-  part2_gateway_1   nginx -g daemon off;   Up      443/tcp, 0.0.0.0:8080->80/tcp                      
-  ```
+The result should be something like below, where all the services have an **Up** state:
+
+```
+    Name               Command          State                         Ports                        
+---------------------------------------------------------------------------------------------------
+part2_api_1       ./start.sh             Up      0.0.0.0:3000->3000/tcp                             
+part2_db_1        /run.sh                Up      0.0.0.0:27017->27017/tcp, 0.0.0.0:28017->28017/tcp 
+part2_gateway_1   nginx -g daemon off;   Up      443/tcp, 0.0.0.0:8080->80/tcp                      
+```
 
 ## Test the API
-The application is up and running, so let's see if we can invoke the API on the Nginx server and go all the way to the database and back.
+The application is up and running, so let's see if we can invoke the API on the Nginx server and go all 
+the way to the database and back.
 
-1. Let's first see if there are any Cars in the database
+1. Let's first see if there are any Cars in the database by running a curl command to get all cars
 
     ```bash
     curl "http://localhost:8080/api/Cars"
@@ -530,14 +577,10 @@ Name   Command   State   Ports
 ------------------------------
 ```
 
+
+
 ## References
 
-### Docker Compose documentation
-
-[https://docs.docker.com/compose/overview/](https://docs.docker.com/compose/overview/)
-
-### Compose File References
-[https://docker.github.io/compose/compose-file/](https://docker.github.io/compose/compose-file/)
-
-### Command Line References
-[https://docker.github.io/compose/reference/](https://docker.github.io/compose/reference/)
+* [Docker Compose Documentation](https://docs.docker.com/compose/overview/)
+* [Compose File References](https://docker.github.io/compose/compose-file/)
+* [Command Line References](https://docker.github.io/compose/reference/)
