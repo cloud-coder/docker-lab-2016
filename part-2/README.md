@@ -240,8 +240,8 @@ variable definitions.
 
 ## Verify Compose File
 
-Now that you have created your Docker Compose file it should look like the listing below.  There is a completed
-version of the file in the solutions directory [docker-compose-1.yml](solution/docker-compose-1.yml), if you need it:
+Now that you have created your Docker Compose file it should look like the listing below. There is a completed
+version of the file in the _solution_ directory [docker-compose-1.yml](solution/docker-compose-1.yml). You can either copy the _docker-compose-1.yml_ file into the project root directory (under the _part-2_ directory) and rename it to _docker-compose.yml_ (by removing the -1) or you can create a new file called _docker-compose.yml_ and copy and contents below into this file.
 
 ```yaml
 version: "2"
@@ -365,7 +365,14 @@ The _gateway_ service could not connect to the _api_ service. This means that th
 
 ### Resolve Issue
 
-Now that we know the issue let's go fix it in the docker-compose.yml file:
+The reason for the _gateway_ failing to start was that the _api_ server took longer to start, and the _gateway_ service could not find the _api_ service to connect to.
+
+> __Note:__ In scenarios where the failure to start is due to some evnironmental issues, you can start any compose service by executing a _start_ command, in this case the command would look like below:
+> ```bash
+docker-compose start gateway
+```
+
+Now, instead of simply starting the gateway and to avoid future failures, let's fix the _docker-compose.yml_ file by adding a depedency on the availability of _api_ service to the _gateway_ service.
 
 1. Open the docker-compose.yml file in an editor
 2. Locate the gateway service definition and update it to include the dependency on the api service.  The full
