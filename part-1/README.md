@@ -1,20 +1,29 @@
 # Basic Docker
+
+## Prerequisites 
+
+In order to complete this lab you will need to have Docker installed on your local machine.  
+Your lab machine already has this setup.  However, if you would like to do the lab outside of this session you can download 
+and install the [Docker platform](https://www.docker.com/products/overview) yourself.
+
+## Overview 
 In this lab you will create a Docker container for a web server and load balancer known as **NGINX**. This container will be 
 used in later labs as we build up our microservice solution. This lab will get you familiar with creating an image from
  an existing image, and augmenting it using a Dockerfile so that you can have a repeatable and consistent way to create a container.
   NGINX will be running in a Docker Container and you will access the server from your local machine.
 
-You will complete the following high level steps in this lab
-* Create a Docker container of a web server (NGINX) from an image on a public registry (e.g. Docker Hub)
-* Explore the NGINX container you created from the Docker Hub image
-* Create your own NGINX image using Dockerfile that allowed you to customize the base NGINX image with repeatable instructions
-* Create a container from the custom image you built using a Dockerfile
-* Access the running webserver in your container and see your customizations
-* Learn basic docker commands to list, and delete images and containers.
+## Table of Contents
+1. [Create a Docker container from Docker Hub](#create-a-docker-container-from-docker-hub)
+2. [Explore the Container and Run Common Commands](#explore-the-container-and-run-common-commands)
+3. [Create a Docker File to Customize the NGINX Image](#create-a-docker-file-to-customize-the-nginx-image)
+4. [Create a Container using the New Image and Validate](#create-a-container-using-the-new-image-and-validate)
+5. [Run the NGINX Container and Test from your Local Machine](#run-the-nginx-container-and-test-from-your-local-machine)
+6. [Remove Images and Containers](#remove-images-and-containers)
+   * [Stop running container](#stop-running-container)
+   * [Delete container](#delete-container)
+   * [Delete images](#delete-images)
+7. [Summary](#summary)
 
-## Prerequisites 
-
-In order to complete this lab you will need to have Docker installed on your local machine.  Your lab machine already has this setup.  However, if you would like to do the lab outside of this session you can download and install the [Docker platform](https://www.docker.com/products/overview) yourself.
 
 
 ## Create a Docker container from Docker Hub
@@ -248,11 +257,11 @@ see that your container started successfully
 [http://localhost:8080/newIndex.html]http://localhost:8080/newIndex.html where you will see the new 
 HTML page that you created.
 
-## Remove images and containers
+## Remove Images and Containers
 
 Now that we have validated the container we can run some common commands to remove containers and images.
 
-### Stop  running container
+### Stop running container
 
 1.  Get your contianer's ID by listing running containers
     ```bash 
@@ -317,5 +326,5 @@ You have now completed the basic Docker lab.  Let's recap what you learned in th
 * You explored the NGINX container you created from the Docker Hub image
 * You created your own NGINX image using Dockerfile that allowed you to customize the base NGINX image with repeatable instructions
 * You created a container from the custom image you built using a Dockerfile
-* You accessed the running webserver in your container and saw your customizations 
+* You accessed from your local machine the webserver running in a container, and saw your customizations 
 * You learned basic docker commands to list, and delete images and containers.
