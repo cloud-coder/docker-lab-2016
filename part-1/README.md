@@ -13,7 +13,7 @@ used in later labs as we build up our microservice solution. This lab will get y
   NGINX will be running in a Docker Container and you will access the server from your local machine.
 
 ## Table of Contents
-1. [Create a Docker container from Docker Hub](#create-a-docker-container-from-docker-hub)
+1. [Create a Docker Container from Docker Hub](#create-a-docker-container-from-docker-hub)
 2. [Explore the Container and Run Common Commands](#explore-the-container-and-run-common-commands)
 3. [Create a Docker File to Customize the NGINX Image](#create-a-docker-file-to-customize-the-nginx-image)
 4. [Create a Container using the New Image and Validate](#create-a-container-using-the-new-image-and-validate)
@@ -26,7 +26,7 @@ used in later labs as we build up our microservice solution. This lab will get y
 
 
 
-## Create a Docker container from Docker Hub
+## Create a Docker Container from Docker Hub
 The first part of this lab will be to create a Docker container running NGINX within it. A container is a running instance of an image.
 You could start with a base image with just an operating system, and install the required software. However, there is a better way 
 using a public registry of images known as Docker Hub. We will search Docker Hub for a base image for NGINX 
@@ -143,7 +143,7 @@ instruction to a new image if necessary, before finally outputting the ID of you
 
 1. Open a terminal window and create a directory on your local machine (e.g. mycontainer)
 2. Change to the directory you created  ```bash cd mycontainer```
-2. In the directory create an HTML file called ```newIndex.html```, with the following content:
+2. In the directory create an HTML file called _newIndex.html_, with the following content:
     ```html
     <!DOCTYPE html>
     <html>
@@ -212,23 +212,19 @@ Now that you have built an image using the Dockerfile you can create a container
     docker run –it mynginx /bin/bash
     ```
 
-2. Change to the web server root directory 
+2. Change to the web server root directory and list files
     ```bash
     cd /usr/share/nginx/html
-    ```
-
-3. List the files in the directory 
-
-    ```bash
     ls
     ```
 
-4. You should see your __*newIndex.html*__, along with the default files that nginx already had.
-5. Exit from the container
+3. You should see your __*newIndex.html*__, along with the default files that nginx already had.
+4. Exit from the container
 
 ## Run the NGINX Container and Test from your Local Machine
 
-Now that you have created an image using your Dockerfile, you can go ahead and create a running container from the image
+Now that you have created an image using your Dockerfile, you can go ahead and create a running 
+container from the image
 
 1. Run Docker command to create container and map your ports:
 
@@ -240,7 +236,7 @@ Now that you have created an image using your Dockerfile, you can go ahead and c
 > * The -d flag tells the run command to run this in a detached mode.  This means when the containers exit when the root process used to run the container exits
 > * -p 8080:80 maps port 8080 on your local machine to port 80 in the container
 
-2. You will see a string of characters return, this is your container Id.  Run the Docker ps command to 
+2. You will see a string of characters return, this is your CONTAINER ID.  Run the Docker ps command to 
 see that your container started successfully
 
     ```bash
@@ -283,7 +279,6 @@ You will get a list of containers listed out similar to the screenshot below.
     ```bash
     docker ps -a
     ```
-    ![alt](../images/picture9.png "docker images")
 
 2.  Find the container you want to delete and make note of the first 4 characters of its CONTAINER ID.  You can now 
 delete the container with the following command.
