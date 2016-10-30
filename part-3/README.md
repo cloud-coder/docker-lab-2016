@@ -1,6 +1,9 @@
 # Overview
 In order to scale your application workloads for production needs, you need to select an orchestration framework.  There are a number of popular container orchestration frameworks available today (e.g. [Kubernetes](http://kubernetes.io/), [DCOS/Mesos](https://dcos.io/) and [Docker Swarm](https://docs.docker.com/engine/swarm/)).  This tutorial will help you setup Docker Swarm.
 
+[Watch on YouTube](https://www.youtube.com/watch?v=8c_hQZEx3VA&list=PLKWiGyDcaq_ZT_dYqneTxsc5OglDrj_ap&index=1)
+
+
 
 ## Prerequisites
 1. Install [Docker Toolbox](https://www.docker.com/products/docker-toolbox).  We leverage Docker Machine in the scripts to provision Docker 1.12+ on Virtual Box Linux VMs.  You could just install Docker Engine directly if you are on [Linux](https://docs.docker.com/engine/installation/).
