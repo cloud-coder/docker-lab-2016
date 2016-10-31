@@ -39,13 +39,8 @@ In order to scale your application workloads for production needs, you need to s
 
     ```
     eval $(docker-machine env manager-1)
-    docker run -d -p 5000:5000 --name=swarm-viz \
-     -e HOST=localhost \
-     -e PORT=5000 \
-     -e HOST=$(docker-machine ip manager-1) \
-     -v /var/run/docker.sock:/var/run/docker.sock \
-     manomarks/visualizer
-     open http://$(docker-machine ip manager-1):5000
+    docker run -it -d -p 5000:8080 -v /var/run/docker.sock:/var/run/docker.sock manomarks/visualizer
+    open http://$(docker-machine ip manager-1):5000
     ```
 1. Target the manager-1, and make it a swarm manager. Take note of the command to join nodes to the swarm.  You will use this in the next step.
 
