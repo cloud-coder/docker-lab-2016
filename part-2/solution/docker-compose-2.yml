@@ -8,7 +8,7 @@ services:
       - "8080:80"
     networks:
       - frontend
-    depends-on:
+    depends_on:
       - "api"
       
   api:
