@@ -323,3 +323,7 @@ You have now completed the basic Docker lab.  Let's recap what you learned in th
 * You created a container from the custom image you built using a Dockerfile
 * You accessed from your local machine the webserver running in a container, and saw your customizations 
 * You learned basic docker commands to list, and delete images and containers.
+
+Lab 2 - Docker Compose
+
+The next lab will be on [Docker Compose](../part-2/README.md)
