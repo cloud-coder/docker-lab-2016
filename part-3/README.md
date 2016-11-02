@@ -52,9 +52,16 @@ In order to scale your application workloads for production needs, you need to s
 1. Join the worker nodes to the swarm.  To do this, target each machine in order, and issue the docker swarm join command that was output by the last step.
 
     ```
+    docker swarm join \
+    --token SWMTKN-1-0dzdhkkye2l2e7c7z0ggkjxdcpk7w9ny0eepmcc8s5foc6a01k-6dwq5cwgffrzs4f0in6vflqig \
+    10.10.1.41:2377
+    ```
+
+    ```
     eval $(docker-machine env worker-1)
     eval $(docker-machine env worker-2)
     ```
+    
 
 1. Target a manager node again, and view all of the nodes in the swarm.
 
