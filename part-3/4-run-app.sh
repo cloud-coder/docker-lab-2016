@@ -1,5 +1,7 @@
+#! /bin/sh
+
 #Create stack by targeting the swarm manager
-eval $(docker-machine env manager-1)
+eval "$(docker-machine env manager-1)"
 #Create needed networks
 docker network create \
   --driver overlay \
@@ -29,7 +31,7 @@ docker service create \
   -e MONGODB_USER=dba \
   -e MONGODB_DATABASE=mycars \
   -e MONGODB_PASS=dbpass \
-  --log-driver=gelf --log-opt gelf-address=udp://$(docker-machine ip manager-1):12201 \
+  --log-driver=gelf --log-opt gelf-address=udp://"$(docker-machine ip manager-1)":12201 \
   --mount type=volume,source=dbdata,target=/data/db,volume-driver=rexray \
   cascon/db:latest
 
@@ -41,7 +43,7 @@ docker service create \
     --network logging \
     --replicas 1 \
     -e NODE_ENV=production \
-    --log-driver=gelf --log-opt gelf-address=udp://$(docker-machine ip manager-1):12201 \
+    --log-driver=gelf --log-opt gelf-address=udp://"$(docker-machine ip manager-1)":12201 \
     cascon/strongloop:latest
 
 #Create the nginx gateway to strongloop and expose ingress 8080
@@ -50,6 +52,6 @@ docker service create \
     --network frontend \
     --network logging \
     --replicas 1 \
-    --log-driver=gelf --log-opt gelf-address=udp://$(docker-machine ip manager-1):12201 \
+    --log-driver=gelf --log-opt gelf-address=udp://"$(docker-machine ip manager-1)":12201 \
     -p 8080:80 \
     cascon/gateway:latest
