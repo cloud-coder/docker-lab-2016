@@ -1,4 +1,6 @@
-eval $(docker-machine env manager-1)
+#! /bin/sh
+
+eval "$(docker-machine env manager-1)"
 
 #elasticsearch
 docker service create \
